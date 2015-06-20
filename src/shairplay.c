@@ -48,6 +48,8 @@ typedef struct {
 	char ao_driver[56];
 	char ao_devicename[56];
 	char ao_deviceid[16];
+
+	char key[56];
 } shairplay_options_t;
 
 typedef struct {
@@ -265,6 +267,10 @@ parse_options(shairplay_options_t *opt, int argc, char *argv[])
 			strncpy(opt->apname, *++argv, sizeof(opt->apname)-1);
 		} else if (!strncmp(arg, "--apname=", 9)) {
 			strncpy(opt->apname, arg+9, sizeof(opt->apname)-1);
+		} else if (!strcmp(arg, "-k")) {
+			strncpy(opt->key, *++argv, sizeof(opt->key)-1);
+		} else if (!strncmp(arg, "--key=", 6)) {
+			strncpy(opt->key, arg+6, sizeof(opt->key)-1);
 		} else if (!strcmp(arg, "-p")) {
 			strncpy(opt->password, *++argv, sizeof(opt->password)-1);
 		} else if (!strncmp(arg, "--password=", 11)) {
@@ -290,6 +296,7 @@ parse_options(shairplay_options_t *opt, int argc, char *argv[])
 			fprintf(stderr, "Usage: %s [OPTION...]\n", path);
 			fprintf(stderr, "\n");
 			fprintf(stderr, "  -a, --apname=AirPort            Sets Airport name\n");
+			fprintf(stderr, "  -k, --key=airport.key           Sets the private key\n");
 			fprintf(stderr, "  -p, --password=secret           Sets password\n");
 			fprintf(stderr, "  -o, --server_port=5000          Sets port for RAOP service\n");
 			fprintf(stderr, "      --hwaddr=address            Sets the MAC address, useful if running multiple instances\n");
@@ -346,10 +353,10 @@ main(int argc, char *argv[])
 	raop_cbs.audio_destroy = audio_destroy;
 	raop_cbs.audio_set_volume = audio_set_volume;
 
-	raop = raop_init_from_keyfile(10, &raop_cbs, "airport.key", NULL);
+	raop = raop_init_from_keyfile(10, &raop_cbs, options.key != NULL ? options.key : "airport.key", NULL);
 	if (raop == NULL) {
 		fprintf(stderr, "Could not initialize the RAOP service\n");
-		fprintf(stderr, "Please make sure the airport.key file is in the current directory.\n");
+		fprintf(stderr, "Please make sure the airport.key file is in the current directory or specified using the --key argument.\n");
 		return -1;
 	}
 
