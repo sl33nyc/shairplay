@@ -1,0 +1,35 @@
+#!/bin/bash
+# /etc/init.d/shairplay
+
+### BEGIN INIT INFO
+# Provides:          shairplay
+# Required-Start:    $remote_fs $syslog $network
+# Required-Stop:     $remote_fs $syslog $network
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Shairplay init.d script
+# Description:       shairplay endpoint
+### END INIT INFO
+
+test -f /etc/default/shairplay || exit 5
+. /etc/default/shairplay
+
+HOSTNAME=`hostname -f`
+HWADDR=`ifconfig wlan0| grep HWaddr | awk '{print $5}'`
+
+case "$1" in 
+    start)
+        echo "Starting shairplay"
+        sudo -u pi /usr/local/bin/shairplay -a "${NAME}@${HOSTNAME}" --hwaddr="${HWADDR}" -k "${KEY}" 2&>1 >/var/log/shairplay &
+        ;;
+    stop)
+        echo "Stopping shairplay"
+        killall shairplay
+        ;;
+    *)
+        echo "Usage: /etc/init.d/shairplay start|stop"
+        exit 1
+        ;;
+esac
+
+exit 0
