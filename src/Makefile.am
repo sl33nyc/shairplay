@@ -11,4 +11,9 @@ if HAVE_LIBAO
 
   shairplay_CFLAGS += $(libao_CFLAGS)
   shairplay_LDADD += $(libao_LIBS)
+
+if HAVE_LIBCEC
+shairplay_CFLAGS += $(libcec_CFLAGS)
+shairplay_LDADD += $(libcec_LIBS)
+endif
 endif

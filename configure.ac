@@ -71,6 +71,8 @@ AM_CONDITIONAL([OS_FREEBSD],[test "$os_freebsd" = "yes"])
 PKG_CHECK_MODULES([libao], [ao >= 1.1.0], [have_libao=1], [have_libao=0])
 AM_CONDITIONAL([HAVE_LIBAO], [test "$have_libao" -eq 1])
 
+PKG_CHECK_MODULES([libcec], [libcec >= 2:1:0], [have_libcec=1], [have_libcec=0])
+AM_CONDITIONAL([HAVE_LIBCEC], [test "$have_libcec" -eq 1])
 
 
 AC_CONFIG_FILES(
