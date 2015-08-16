@@ -143,7 +143,7 @@ dnssd_init(int *error)
 		return NULL;
 	}
 
-#ifdef WIN32
+//#ifdef WIN32
 	dnssd->module = LoadLibraryA("dnssd.dll");
 	if (!dnssd->module) {
 		if (error) *error = DNSSD_ERROR_LIBNOTFOUND;
@@ -166,6 +166,7 @@ dnssd_init(int *error)
 		free(dnssd);
 		return NULL;
 	}
+    /*
 #elif USE_LIBDL
 	dnssd->module = dlopen("libdns_sd.so", RTLD_LAZY);
 	if (!dnssd->module) {
@@ -198,6 +199,7 @@ dnssd_init(int *error)
 	dnssd->TXTRecordGetBytesPtr = &TXTRecordGetBytesPtr;
 	dnssd->TXTRecordDeallocate = &TXTRecordDeallocate;
 #endif
+    */
 
 	return dnssd;
 }

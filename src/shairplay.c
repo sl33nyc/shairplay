@@ -205,7 +205,8 @@ audio_init(void *cls, int bits, int channels, int samplerate)
 	shairplay_options_t *options = cls;
 	shairplay_session_t *session;
     cec_adapter deviceList[10];
-    int res;
+    cec_power_status power_status;
+    int err;
 
 	session = calloc(1, sizeof(shairplay_session_t));
 	assert(session);
