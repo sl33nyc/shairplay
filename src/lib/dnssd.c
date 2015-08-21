@@ -143,7 +143,7 @@ dnssd_init(int *error)
 		return NULL;
 	}
 
-#ifdef WIN32
+//#ifdef WIN32
 	dnssd->module = LoadLibraryA("dnssd.dll");
 	if (!dnssd->module) {
 		if (error) *error = DNSSD_ERROR_LIBNOTFOUND;
@@ -166,38 +166,38 @@ dnssd_init(int *error)
 		free(dnssd);
 		return NULL;
 	}
-#elif USE_LIBDL
-	dnssd->module = dlopen("libdns_sd.so", RTLD_LAZY);
-	if (!dnssd->module) {
-		if (error) *error = DNSSD_ERROR_LIBNOTFOUND;
-		free(dnssd);
-		return NULL;
-	}
-	dnssd->DNSServiceRegister = (DNSServiceRegister_t)dlsym(dnssd->module, "DNSServiceRegister");
-	dnssd->DNSServiceRefDeallocate = (DNSServiceRefDeallocate_t)dlsym(dnssd->module, "DNSServiceRefDeallocate");
-	dnssd->TXTRecordCreate = (TXTRecordCreate_t)dlsym(dnssd->module, "TXTRecordCreate");
-	dnssd->TXTRecordSetValue = (TXTRecordSetValue_t)dlsym(dnssd->module, "TXTRecordSetValue");
-	dnssd->TXTRecordGetLength = (TXTRecordGetLength_t)dlsym(dnssd->module, "TXTRecordGetLength");
-	dnssd->TXTRecordGetBytesPtr = (TXTRecordGetBytesPtr_t)dlsym(dnssd->module, "TXTRecordGetBytesPtr");
-	dnssd->TXTRecordDeallocate = (TXTRecordDeallocate_t)dlsym(dnssd->module, "TXTRecordDeallocate");
-
-	if (!dnssd->DNSServiceRegister || !dnssd->DNSServiceRefDeallocate || !dnssd->TXTRecordCreate ||
-	    !dnssd->TXTRecordSetValue || !dnssd->TXTRecordGetLength || !dnssd->TXTRecordGetBytesPtr ||
-	    !dnssd->TXTRecordDeallocate) {
-		if (error) *error = DNSSD_ERROR_PROCNOTFOUND;
-		dlclose(dnssd->module);
-		free(dnssd);
-		return NULL;
-	}
-#else
-	dnssd->DNSServiceRegister = &DNSServiceRegister;
-	dnssd->DNSServiceRefDeallocate = &DNSServiceRefDeallocate;
-	dnssd->TXTRecordCreate = &TXTRecordCreate;
-	dnssd->TXTRecordSetValue = &TXTRecordSetValue;
-	dnssd->TXTRecordGetLength = &TXTRecordGetLength;
-	dnssd->TXTRecordGetBytesPtr = &TXTRecordGetBytesPtr;
-	dnssd->TXTRecordDeallocate = &TXTRecordDeallocate;
-#endif
+//#elif USE_LIBDL
+//	dnssd->module = dlopen("libdns_sd.so", RTLD_LAZY);
+//	if (!dnssd->module) {
+//		if (error) *error = DNSSD_ERROR_LIBNOTFOUND;
+//		free(dnssd);
+//		return NULL;
+//	}
+//	dnssd->DNSServiceRegister = (DNSServiceRegister_t)dlsym(dnssd->module, "DNSServiceRegister");
+//	dnssd->DNSServiceRefDeallocate = (DNSServiceRefDeallocate_t)dlsym(dnssd->module, "DNSServiceRefDeallocate");
+//	dnssd->TXTRecordCreate = (TXTRecordCreate_t)dlsym(dnssd->module, "TXTRecordCreate");
+//	dnssd->TXTRecordSetValue = (TXTRecordSetValue_t)dlsym(dnssd->module, "TXTRecordSetValue");
+//	dnssd->TXTRecordGetLength = (TXTRecordGetLength_t)dlsym(dnssd->module, "TXTRecordGetLength");
+//	dnssd->TXTRecordGetBytesPtr = (TXTRecordGetBytesPtr_t)dlsym(dnssd->module, "TXTRecordGetBytesPtr");
+//	dnssd->TXTRecordDeallocate = (TXTRecordDeallocate_t)dlsym(dnssd->module, "TXTRecordDeallocate");
+//
+//	if (!dnssd->DNSServiceRegister || !dnssd->DNSServiceRefDeallocate || !dnssd->TXTRecordCreate ||
+//	    !dnssd->TXTRecordSetValue || !dnssd->TXTRecordGetLength || !dnssd->TXTRecordGetBytesPtr ||
+//	    !dnssd->TXTRecordDeallocate) {
+//		if (error) *error = DNSSD_ERROR_PROCNOTFOUND;
+//		dlclose(dnssd->module);
+//		free(dnssd);
+//		return NULL;
+//	}
+//#else
+//	dnssd->DNSServiceRegister = &DNSServiceRegister;
+//	dnssd->DNSServiceRefDeallocate = &DNSServiceRefDeallocate;
+//	dnssd->TXTRecordCreate = &TXTRecordCreate;
+//	dnssd->TXTRecordSetValue = &TXTRecordSetValue;
+//	dnssd->TXTRecordGetLength = &TXTRecordGetLength;
+//	dnssd->TXTRecordGetBytesPtr = &TXTRecordGetBytesPtr;
+//	dnssd->TXTRecordDeallocate = &TXTRecordDeallocate;
+//#endif
 
 	return dnssd;
 }

@@ -11,4 +11,14 @@ if HAVE_LIBAO
 
   shairplay_CFLAGS += $(libao_CFLAGS)
   shairplay_LDADD += $(libao_LIBS)
+
+if HAVE_JSONC
+  shairplay_CFLAGS += $(json_CLFAGS)
+  shairplay_LDADD += $(json_LIBS)
+endif
+
+if HAVE_LIBCURL
+  shairplay_CFLAGS += $(libcurl_CFLAGS)
+  shairplay_LDADD += $(libcurl_LIBS)
+endif
 endif

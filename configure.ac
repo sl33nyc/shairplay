@@ -71,7 +71,13 @@ AM_CONDITIONAL([OS_FREEBSD],[test "$os_freebsd" = "yes"])
 PKG_CHECK_MODULES([libao], [ao >= 1.1.0], [have_libao=1], [have_libao=0])
 AM_CONDITIONAL([HAVE_LIBAO], [test "$have_libao" -eq 1])
 
+# Custom check for json-c
+PKG_CHECK_MODULES([json], [json >= 0.11], [have_jsonc=1], [have_jsonc=0])
+AM_CONDITIONAL([HAVE_JSONC], [test "$have_jsonc" -eq 1])
 
+# Custom check for libcurl
+PKG_CHECK_MODULES([libcurl], [libcurl >= 7.43.0], [have_libcurl=1], [have_libcurl=0])
+AM_CONDITIONAL([HAVE_LIBCURL], [test "$have_libcurl" -eq 1])
 
 AC_CONFIG_FILES(
 	[Makefile]

@@ -36,6 +36,8 @@
 #include <shairplay/raop.h>
 
 #include <ao/ao.h>
+#include <json-c/json.h>
+#include <curl/curl.h>
 
 #include "config.h"
 
@@ -62,8 +64,10 @@ typedef struct {
 	float volume;
 } shairplay_session_t;
 
-
+static CURL *curl;
 static int running;
+
+const char *json_payload = "{\"desired\": {\"powered\": true, \"hdmi_port\": 1}}";
 
 #ifndef WIN32
 
@@ -120,6 +124,13 @@ parse_hwaddr(const char *str, char *hwaddr, int hwaddrlen)
 	return 0;
 }
 
+static size_t read_callback(void *ptr, size_t size, size_t nmemb, void *stream) {
+    curl_off_t nread;
+    char *in = (char *)stream;
+    memcpy(ptr, stream, strlen(in) * sizeof(char));
+    return strlen(in) * sizeof(char);
+}
+
 static ao_device *
 audio_open_device(shairplay_options_t *opt, int bits, int channels, int samplerate)
 {
@@ -161,6 +172,26 @@ audio_init(void *cls, int bits, int channels, int samplerate)
 {
 	shairplay_options_t *options = cls;
 	shairplay_session_t *session;
+    struct curl_slist *chunk = NULL;
+    CURLcode res;
+
+    if (curl) {
+        chunk = curl_slist_append(chunk, "Content-Type: application/json");
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+        curl_easy_setopt(curl, CURLOPT_URL, "http://localhost:3000/api/cec");
+        curl_easy_setopt(curl, CURLOPT_PUT, 1L);
+        curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
+        curl_easy_setopt(curl, CURLOPT_READDATA, json_payload);
+        curl_easy_setopt(curl, CURLOPT_READFUNCTION, &read_callback);
+        curl_easy_setopt(curl, CURLOPT_INFILESIZE, strlen(json_payload));
+        res = curl_easy_perform(curl);
+
+        if (res != CURLE_OK) {
+            printf("Oops!  Failed to PUT JSON!\n");
+        }
+
+        curl_slist_free_all(chunk);
+    }
 
 	session = calloc(1, sizeof(shairplay_session_t));
 	assert(session);
@@ -345,6 +376,9 @@ main(int argc, char *argv[])
 		ao_close(device);
 		device = NULL;
 	}
+
+    curl_global_init(CURL_GLOBAL_DEFAULT);
+    curl = curl_easy_init();
 
 	memset(&raop_cbs, 0, sizeof(raop_cbs));
 	raop_cbs.cls = &options;
